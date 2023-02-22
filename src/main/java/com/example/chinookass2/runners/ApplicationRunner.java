@@ -25,5 +25,6 @@ public class ApplicationRunner implements org.springframework.boot.ApplicationRu
         System.out.println(customerRepository.findByName("Tremblay"));
         System.out.println(customerRepository.returnCountryWithMostCustomers());
         System.out.println(customerRepository.returngetHighestSpender());
+        System.out.println(customerRepository.returngetCustomerMostPopularGenre(88));
     }
 }
