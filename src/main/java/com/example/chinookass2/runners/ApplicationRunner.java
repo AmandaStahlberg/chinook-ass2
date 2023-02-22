@@ -30,5 +30,10 @@ public class ApplicationRunner implements org.springframework.boot.ApplicationRu
         Customer newCustomer = new Customer(0,"Amanda", "Ståhlberg", "Sweden", "123 45", "123 456 66 77", "hej@email.com" );
         System.out.println(customerRepository.add(newCustomer));
         System.out.println(newCustomer);
+        // Requirement 6, find customer on id 67 and update findCustomer to updatedCustomer
+        Customer findCustomer = customerRepository.findById(67);
+        Customer updatedCustomer = new Customer(findCustomer.id(),"Updated Amanda", findCustomer.lastName() , findCustomer.country(), findCustomer.postalCode(), findCustomer.phoneNumber(), "new@email.com");
+        System.out.println(customerRepository.update(updatedCustomer));
+        System.out.println(updatedCustomer);
     }
 }

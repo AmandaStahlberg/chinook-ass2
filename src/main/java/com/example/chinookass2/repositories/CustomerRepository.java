@@ -10,5 +10,4 @@ public interface CustomerRepository extends CRUDRepository<Customer, Integer> {
 
     Collection<Customer> pageCustomers(int limit, int offset);
 
-    int add(Customer customer);
 }
