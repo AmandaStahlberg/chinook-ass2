@@ -1,6 +1,7 @@
 package com.example.chinookass2.repositories;
 
 import com.example.chinookass2.models.Customer;
+import com.example.chinookass2.models.CustomerCountry;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -108,6 +109,27 @@ public class CustomerRepositoryImpl implements CustomerRepository {
         }
         return customers;
     }
+
+
+@Override
+    public  CustomerCountry getCountryByMostCustomers() {
+        String sql = "SELECT country, count(*) as num_customers FROM customer GROUP BY country ORDER BY num_customers DESC LIMIT 1";
+        CustomerCountry customerCountry = null;
+        try (Connection conn = DriverManager.getConnection(url, username, password)) {
+            PreparedStatement statement = conn.prepareStatement(sql);
+            ResultSet result = statement.executeQuery();
+            while(result.next()) {
+                customerCountry = new CustomerCountry(result.getString("country"), result.getInt("num_customers"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return customerCountry;
+    }
+
+
+
+
     @Override
     public int insert(Customer object) {
         return 0;
@@ -126,6 +148,11 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     @Override
     public int deleteById(Integer id) {
         return 0;
+    }
+
+    @Override
+    public CustomerCountry returnCountryWithMostCustomers() {
+        return getCountryByMostCustomers();
     }
 
 }
