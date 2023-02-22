@@ -17,7 +17,9 @@ public class ApplicationRunner implements org.springframework.boot.ApplicationRu
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
+        // Requirement 1
         System.out.println(customerRepository.findAll());
-
+        // Requirement 2, find customer with id 1
+        System.out.println(customerRepository.findById(1));
     }
 }
