@@ -23,5 +23,7 @@ public class ApplicationRunner implements org.springframework.boot.ApplicationRu
         System.out.println(customerRepository.findById(1));
         // Requirement 3, find customer with Tremblay as lastname
         System.out.println(customerRepository.findByName("Tremblay"));
+        // Requirement 4, page 2 customers from id 5
+        System.out.println(customerRepository.pageCustomers(2, 4));
     }
 }

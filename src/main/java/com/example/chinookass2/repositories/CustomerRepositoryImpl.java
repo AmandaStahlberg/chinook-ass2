@@ -108,6 +108,36 @@ public class CustomerRepositoryImpl implements CustomerRepository {
         }
         return customers;
     }
+
+    @Override
+    public Collection<Customer> pageCustomers(int limit, int offset) {
+        String sql = "SELECT * FROM customer ORDER BY customer_id LIMIT ? OFFSET ?";
+        List<Customer> customers = new ArrayList<>();
+        try(Connection conn = DriverManager.getConnection(url, username,password)) {
+            // Write statement
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setInt(1, limit);
+            statement.setInt(2, offset);
+            // Execute statement
+            ResultSet result = statement.executeQuery();
+            // Handle result
+            while(result.next()) {
+                Customer customer = new Customer(
+                        result.getInt("customer_id"),
+                        result.getString("first_name"),
+                        result.getString("last_name"),
+                        result.getString("country"),
+                        result.getString("postal_code"),
+                        result.getString("phone"),
+                        result.getString("email"));
+
+                customers.add(customer);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return customers;
+    }
     @Override
     public int insert(Customer object) {
         return 0;

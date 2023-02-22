@@ -7,4 +7,6 @@ import java.util.Collection;
 public interface CustomerRepository extends CRUDRepository<Customer, Integer> {
 
     Collection<Customer> findByName(String search);
+
+    Collection<Customer> pageCustomers(int limit, int offset);
 }
