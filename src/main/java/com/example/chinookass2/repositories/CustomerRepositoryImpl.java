@@ -2,6 +2,7 @@ package com.example.chinookass2.repositories;
 
 import com.example.chinookass2.models.Customer;
 import com.example.chinookass2.models.CustomerCountry;
+import com.example.chinookass2.models.CustomerInvoice;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -127,6 +128,23 @@ public class CustomerRepositoryImpl implements CustomerRepository {
         return customerCountry;
     }
 
+    public CustomerInvoice getHighestSpender() {
+        String sql = "SELECT customer_id, Sum(total) AS invoice_total FROM invoice" +
+                " GROUP BY customer_id ORDER BY invoice_total LIMIT 1";
+        CustomerInvoice customerSpender = null;
+        try (Connection con = DriverManager.getConnection(url, username, password)) {
+            PreparedStatement statement = con.prepareStatement(sql);
+            ResultSet rs = statement.executeQuery();
+            while(rs.next()) {
+                customerSpender = new CustomerInvoice(rs.getInt("customer_id"), rs.getInt("invoice_total"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return customerSpender;
+    }
+
+
 
 
 
@@ -153,6 +171,11 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     @Override
     public CustomerCountry returnCountryWithMostCustomers() {
         return getCountryByMostCustomers();
+    }
+
+    @Override
+    public CustomerInvoice returngetHighestSpender() {
+        return getHighestSpender();
     }
 
 }
