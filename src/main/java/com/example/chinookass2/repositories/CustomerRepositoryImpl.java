@@ -86,8 +86,8 @@ public class CustomerRepositoryImpl implements CustomerRepository {
         try(Connection conn = DriverManager.getConnection(url, username,password)) {
             // Write statement
             PreparedStatement statement = conn.prepareStatement(sql);
-            statement.setString(1, search);
-            statement.setString(2, search);
+            statement.setString(1, "%" + search + "%");
+            statement.setString(2, "%" + search + "%");
             // Execute statement
             ResultSet result = statement.executeQuery();
             // Handle result
