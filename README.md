@@ -2,7 +2,7 @@
 This readme file provides the instructions and requirements for creating and manipulating a SQL database using PostgreSQL in PgAdmin. The assignment is divided into two parts, Appendix A and Appendix B.
 
 ## Appendix A: SQL scripts to create database
-In this part, we were required to create several SQL scripts that can be run to create a database, set up tables, add relationships, and populate the tables with data. The database theme is superheroes, and it's called `SuperheroesDb`. The scripts are written in PgAdmin through the query tool. You can find the scripts to Appendix A in the SCRIPTFOLDER
+In this part, we were required to create several SQL scripts that can be run to create a database, set up tables, add relationships, and populate the tables with data. The database theme is superheroes, and it's called `SuperheroesDb`. The scripts are written in PgAdmin through the query tool. You can find the scripts to Appendix A in the [sql-script folder](https://github.com/AmandaStahlberg/chinook-ass2/tree/master/sql-script).
 
 ### Requirements
 * Create a database in PgAdmin called Superheroes
