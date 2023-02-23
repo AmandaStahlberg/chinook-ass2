@@ -1,6 +1,9 @@
 package com.example.chinookass2.repositories;
 
 import com.example.chinookass2.models.Customer;
+import com.example.chinookass2.models.CustomerCountry;
+import com.example.chinookass2.models.CustomerGenre;
+import com.example.chinookass2.models.CustomerInvoice;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -8,7 +11,7 @@ import java.sql.*;
 import java.util.*;
 
 @Repository
-public class CustomerRepositoryImpl implements CustomerRepository {
+public  class CustomerRepositoryImpl implements CustomerRepository {
     private final String url;
     private final String username;
     private final String password;
@@ -138,6 +141,71 @@ public class CustomerRepositoryImpl implements CustomerRepository {
         }
         return customers;
     }
+
+
+@Override
+    public  CustomerCountry getCountryByMostCustomers() {
+        String sql = "SELECT country, count(*) as num_customers FROM customer GROUP BY country ORDER BY num_customers DESC LIMIT 1";
+        CustomerCountry customerCountry = null;
+        try (Connection conn = DriverManager.getConnection(url, username, password)) {
+            PreparedStatement statement = conn.prepareStatement(sql);
+            ResultSet result = statement.executeQuery();
+            while(result.next()) {
+                customerCountry = new CustomerCountry(result.getString("country"), result.getInt("num_customers"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return customerCountry;
+    }
+
+    public CustomerInvoice getHighestSpender() {
+        String sql = "SELECT customer_id, Sum(total) AS invoice_total FROM invoice" +
+                " GROUP BY customer_id ORDER BY invoice_total LIMIT 1";
+        CustomerInvoice customerSpender = null;
+        try (Connection con = DriverManager.getConnection(url, username, password)) {
+            PreparedStatement statement = con.prepareStatement(sql);
+            ResultSet rs = statement.executeQuery();
+            while(rs.next()) {
+                customerSpender = new CustomerInvoice(rs.getInt("customer_id"), rs.getInt("invoice_total"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return customerSpender;
+    }
+
+    public CustomerGenre getCustomerMostPopularGenre(int customerId) {
+        String sql = "SELECT genre.\"name\" as genre_name, count(genre.\"name\") as count " +
+                "FROM invoice_line " +
+                "JOIN invoice " +
+                "ON invoice.invoice_id = invoice_line.invoice_id " +
+                "JOIN track " +
+                "ON invoice_line.track_id = track.track_id " +
+                "JOIN genre " +
+                "ON track.genre_id = genre.genre_id " +
+                "WHERE customer_id = 1 " +
+                "GROUP BY genre.name " +
+                "ORDER BY count DESC " +
+                "LIMIT 1";
+
+        CustomerGenre customerGenre = null;
+        try (Connection con = DriverManager.getConnection(url, username, password)) {
+            PreparedStatement statement = con.prepareStatement(sql);
+            ResultSet result = statement.executeQuery();
+            while(result.next()) {
+                customerGenre = new CustomerGenre(customerId, result.getString("genre_name"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return customerGenre;
+    }
+
+
+
+
+
     @Override
     public int add(Customer customer) {
         String sql = "INSERT INTO customer(first_name, last_name, country, postal_code, phone, email) VALUES (?,?,?,?,?,?)";
@@ -193,5 +261,26 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     public int deleteById(Integer id) {
         return 0;
     }
+
+    @Override
+    public CustomerCountry returnCountryWithMostCustomers() {
+        return getCountryByMostCustomers();
+    }
+
+    @Override
+    public CustomerInvoice returngetHighestSpender() {
+        return getHighestSpender();
+    }
+
+    @Override
+    public CustomerGenre returngetCustomerMostPopularGenre() {
+        return null;
+    }
+
+    @Override
+    public CustomerGenre returngetCustomerMostPopularGenre(int customerId) {
+        return getCustomerMostPopularGenre(customerId);
+    }
+
 
 }
