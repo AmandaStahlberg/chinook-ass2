@@ -159,15 +159,15 @@ public  class CustomerRepositoryImpl implements CustomerRepository {
         return customerCountry;
     }
 
+
     public CustomerInvoice getHighestSpender() {
-        String sql = "SELECT customer_id, Sum(total) AS invoice_total FROM invoice" +
-                " GROUP BY customer_id ORDER BY invoice_total LIMIT 1";
+        String sql = "SELECT customer_id FROM invoice GROUP BY customer_id  ORDER BY SUM(total) DESC LIMIT 1; ";
         CustomerInvoice customerSpender = null;
-        try (Connection con = DriverManager.getConnection(url, username, password)) {
-            PreparedStatement statement = con.prepareStatement(sql);
-            ResultSet rs = statement.executeQuery();
-            while(rs.next()) {
-                customerSpender = new CustomerInvoice(rs.getInt("customer_id"), rs.getInt("invoice_total"));
+        try (Connection conn = DriverManager.getConnection(url, username, password)) {
+            PreparedStatement statement = conn.prepareStatement(sql);
+            ResultSet result = statement.executeQuery();
+            while(result.next()) {
+                customerSpender = new CustomerInvoice(result.getInt("customer_id"));
             }
         } catch (Exception e) {
             e.printStackTrace();

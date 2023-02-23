@@ -19,6 +19,7 @@ public interface CustomerRepository extends CRUDRepository<Customer, Integer> {
 
     CustomerInvoice returngetHighestSpender();
 
+
     CustomerGenre returngetCustomerMostPopularGenre();
 
     CustomerGenre returngetCustomerMostPopularGenre(int customerId);

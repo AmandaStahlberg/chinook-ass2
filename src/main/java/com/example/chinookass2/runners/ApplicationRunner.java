@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.stereotype.Component;
 
+import java.sql.*;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -226,8 +227,7 @@ public class ApplicationRunner implements org.springframework.boot.ApplicationRu
                     case 8:
                         System.out.println(
                                 customerRepository.findById(customerRepository.returngetHighestSpender().customerId()).firstName() +
-                                        " " + customerRepository.findById(customerRepository.returngetHighestSpender().customerId()).lastName() +
-                                        " (total: " + customerRepository.returngetHighestSpender().toString() + ")");
+                                        " " + customerRepository.findById(customerRepository.returngetHighestSpender().customerId()).lastName()+ " , customer id: " + customerRepository.returngetHighestSpender().customerId());
                         break;
                     case 9:
                         getMostPopularGenre();
