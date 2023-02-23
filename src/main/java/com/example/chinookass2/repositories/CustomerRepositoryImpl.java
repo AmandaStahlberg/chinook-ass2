@@ -89,8 +89,38 @@ public  class CustomerRepositoryImpl implements CustomerRepository {
         try(Connection conn = DriverManager.getConnection(url, username,password)) {
             // Write statement
             PreparedStatement statement = conn.prepareStatement(sql);
-            statement.setString(1, search);
-            statement.setString(2, search);
+            statement.setString(1, "%" + search + "%");
+            statement.setString(2, "%" + search + "%");
+            // Execute statement
+            ResultSet result = statement.executeQuery();
+            // Handle result
+            while(result.next()) {
+                Customer customer = new Customer(
+                        result.getInt("customer_id"),
+                        result.getString("first_name"),
+                        result.getString("last_name"),
+                        result.getString("country"),
+                        result.getString("postal_code"),
+                        result.getString("phone"),
+                        result.getString("email"));
+
+                customers.add(customer);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return customers;
+    }
+
+    @Override
+    public Collection<Customer> pageCustomers(int limit, int offset) {
+        String sql = "SELECT * FROM customer ORDER BY customer_id LIMIT ? OFFSET ?";
+        List<Customer> customers = new ArrayList<>();
+        try(Connection conn = DriverManager.getConnection(url, username,password)) {
+            // Write statement
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setInt(1, limit);
+            statement.setInt(2, offset);
             // Execute statement
             ResultSet result = statement.executeQuery();
             // Handle result
@@ -177,13 +207,49 @@ public  class CustomerRepositoryImpl implements CustomerRepository {
 
 
     @Override
-    public int insert(Customer object) {
-        return 0;
-    }
+    public int add(Customer customer) {
+        String sql = "INSERT INTO customer(first_name, last_name, country, postal_code, phone, email) VALUES (?,?,?,?,?,?)";
+        int newCustomer = 0;
+        try (Connection conn = DriverManager.getConnection(url, username, password)) {
+            // Write statement
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setString(1, customer.firstName());
+            statement.setString(2, customer.lastName());
+            statement.setString(3, customer.country());
+            statement.setString(4, customer.postalCode());
+            statement.setString(5, customer.phoneNumber());
+            statement.setString(6, customer.email());
+            // Execute statement
+            newCustomer = statement.executeUpdate();
+            // Handle result
 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return newCustomer;
+    }
     @Override
-    public int update(Customer object) {
-        return 0;
+    public int update(Customer customer) {
+        String sql = "UPDATE customer SET first_name = ?, last_name = ?, country = ?, postal_code = ?, phone = ?, email = ? WHERE customer_id = ?";
+        int updatedCustomer = 0;
+        try (Connection conn = DriverManager.getConnection(url, username, password)) {
+            // Write statement
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setString(1, customer.firstName());
+            statement.setString(2, customer.lastName());
+            statement.setString(3, customer.country());
+            statement.setString(4, customer.postalCode());
+            statement.setString(5, customer.phoneNumber());
+            statement.setString(6, customer.email());
+            statement.setInt(7, customer.id());
+            // Execute statement
+            updatedCustomer = statement.executeUpdate();
+            // Handle result
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return updatedCustomer;
     }
 
     @Override

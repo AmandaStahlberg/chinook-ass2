@@ -12,6 +12,7 @@ public interface CustomerRepository extends CRUDRepository<Customer, Integer> {
     Collection<Customer> findByName(String search);
 
 
+
     CustomerCountry getCountryByMostCustomers();
 
 
@@ -21,4 +22,8 @@ public interface CustomerRepository extends CRUDRepository<Customer, Integer> {
     CustomerGenre returngetCustomerMostPopularGenre();
 
     CustomerGenre returngetCustomerMostPopularGenre(int customerId);
+
+    Collection<Customer> pageCustomers(int limit, int offset);
+
+
 }
