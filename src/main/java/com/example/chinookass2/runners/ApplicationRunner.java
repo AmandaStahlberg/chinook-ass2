@@ -28,7 +28,136 @@ public class ApplicationRunner implements org.springframework.boot.ApplicationRu
             System.out.print("Choose an option 1-" + options.length + ": ");
         }
 
-        public void getMostPopularGenre(){
+    public void searchById(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("write customer id: ");
+        boolean founded = true;
+        while (founded){
+            try {
+                System.out.println(customerRepository.findById(scanner.nextInt()));
+                founded = false;
+            }catch (InputMismatchException ex){
+                System.out.print("the customer id should be a number: ");
+                scanner.next();
+            }
+        }
+    }
+
+    public void searchByName(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("write the customer name: ");
+        boolean founded = true;
+        while (founded){
+            try {
+                customerRepository.findByName(scanner.nextLine()).stream().forEach(customer -> System.out.println(customer.toString()));
+                founded = false;
+            }catch (InputMismatchException ex){
+                System.out.print("You need to enter a name: ");
+                scanner.next();
+            }
+        }
+    }
+
+    public void getAPageOfCustomers() {
+        Scanner scanner = new Scanner(System.in);
+        boolean printed = true;
+        int rowsStart = 0;
+        int rowsAmount = 0;
+        while (printed) {
+            try {
+                System.out.print("write the number of the rows: ");
+                rowsAmount = scanner.nextInt();
+                System.out.print("write the start row number : ");
+                rowsStart = scanner.nextInt();
+                customerRepository.pageCustomers(rowsAmount, rowsStart).stream()
+                        .forEach(customer -> System.out.println(customer.toString()));
+                printed = false;
+            } catch (InputMismatchException ex) {
+                System.out.println(" you need to write numbers ");
+                scanner.next();
+            }
+        }
+    }
+
+    public void AddCustomer(){
+        Scanner scanner = new Scanner(System.in);
+        boolean inserted = true;
+        int customerID=0;
+        String firstName;
+        String lastName;
+        String country;
+        String postalCode;
+        String phoneNumber;
+        String email;
+
+        while (inserted){
+            try {
+                System.out.print("write the first name: ");
+                firstName = scanner.nextLine();
+                System.out.print("write the last name : ");
+                lastName = scanner.nextLine();
+                System.out.print("write the country : ");
+                country = scanner.nextLine();
+                System.out.print("write the postalCode : ");
+                postalCode = scanner.nextLine();
+                System.out.print("write the phoneNumber : ");
+                phoneNumber = scanner.nextLine();
+                System.out.print("write the email : ");
+                email = scanner.nextLine();
+                Customer newCustomer = new Customer(0,firstName, lastName, country, postalCode, phoneNumber, email );
+                customerRepository.add(newCustomer);
+                System.out.println(" the custumer "+ firstName + " " + lastName+ " is added to the db");
+                System.out.println(newCustomer);
+                inserted = false;
+            }catch (InputMismatchException ex){
+                System.out.print("You need to write a value: ");
+                scanner.next();
+            }
+        }
+    }
+
+    public void UppdateCustomer(){
+        Scanner scanner = new Scanner(System.in);
+        boolean inserted = true;
+        int customerID;
+        String firstName;
+        String lastName;
+        String country;
+        String postalCode;
+        String phoneNumber;
+        String email;
+
+        while (inserted){
+            try {
+                System.out.print("write the customer id that you want to uppdate: ");
+                customerID = scanner.nextInt();
+                System.out.println("write the first name: ");
+                firstName = scanner.nextLine();
+                firstName = scanner.nextLine();
+                System.out.print("write the last name : ");
+                lastName = scanner.nextLine();
+                System.out.print("write the country : ");
+                country = scanner.nextLine();
+                System.out.print("write the postalCode : ");
+                postalCode = scanner.nextLine();
+                System.out.print("write the phoneNumber : ");
+                phoneNumber = scanner.nextLine();
+                System.out.print("write the email : ");
+                email = scanner.nextLine();
+                Customer updatedCustomer = new Customer(customerID,firstName, lastName, country, postalCode, phoneNumber, email );
+                customerRepository.update(updatedCustomer);
+                System.out.println(" the custumer "+ firstName + " " + lastName+ " is uppdate to the db");
+                System.out.println(updatedCustomer);
+                inserted = false;
+            }catch (InputMismatchException ex){
+                System.out.print("You need to write a value: ");
+                scanner.next();
+            }
+        }
+    }
+
+
+    public void getMostPopularGenre(){
             Scanner scanner = new Scanner(System.in);
             System.out.print("Give the customer an id: ");
             boolean cont = true;
@@ -73,20 +202,22 @@ public class ApplicationRunner implements org.springframework.boot.ApplicationRu
                     case 1:             // Print out all customers from the db
                         customerRepository.findAll().stream().forEach(customer -> System.out.println(customer.toString()));
                         break;
-                    case 2:
-                        
-                        break;
-                    case 3:
 
+                    case 2:
+                        searchById();
+                        break;
+
+                    case 3:
+                        searchByName();
                         break;
                     case 4:
-
+                        getAPageOfCustomers();
                         break;
                     case 5:
-
+                        AddCustomer();
                         break;
                     case 6:
-
+                        UppdateCustomer();
                         break;
                        case 7:
                         System.out.println(customerRepository.returnCountryWithMostCustomers().country() + " (" +
@@ -107,30 +238,7 @@ public class ApplicationRunner implements org.springframework.boot.ApplicationRu
                 scanner.next();
             }
         }
-        //getMostPopularGenre();
-        // Requirement 1
-        System.out.println(customerRepository.findAll());
-        // Requirement 2, find customer with id 1
-        System.out.println(customerRepository.findById(1));
-        // Requirement 3, find customer with Tremblay as lastname
 
-        System.out.println(customerRepository.findByName("Tremblay"));
-        System.out.println(customerRepository.returnCountryWithMostCustomers());
-        System.out.println(customerRepository.returngetHighestSpender());
-        System.out.println(customerRepository.returngetCustomerMostPopularGenre(88));
-
-        System.out.println(customerRepository.findByName("Tr"));
-        // Requirement 4, page 2 customers from id 5
-        System.out.println(customerRepository.pageCustomers(2, 4));
-        // Requirement 5, add newCustomer to customer table
-        Customer newCustomer = new Customer(0,"Amanda", "Ståhlberg", "Sweden", "123 45", "123 456 66 77", "hej@email.com" );
-        System.out.println(customerRepository.add(newCustomer));
-        System.out.println(newCustomer);
-        // Requirement 6, find customer on id 67 and update findCustomer to updatedCustomer
-        Customer findCustomer = customerRepository.findById(67);
-        Customer updatedCustomer = new Customer(findCustomer.id(),"Updated Amanda", findCustomer.lastName() , findCustomer.country(), findCustomer.postalCode(), findCustomer.phoneNumber(), "new@email.com");
-        System.out.println(customerRepository.update(updatedCustomer));
-        System.out.println(updatedCustomer);
 
     }
 }
