@@ -119,7 +119,7 @@ public class ApplicationRunner implements org.springframework.boot.ApplicationRu
 
     public void UppdateCustomer(){
         Scanner scanner = new Scanner(System.in);
-        boolean inserted = true;
+        boolean uppdated = true;
         int customerID;
         String firstName;
         String lastName;
@@ -128,7 +128,7 @@ public class ApplicationRunner implements org.springframework.boot.ApplicationRu
         String phoneNumber;
         String email;
 
-        while (inserted){
+        while (uppdated){
             try {
                 System.out.print("write the customer id that you want to uppdate: ");
                 customerID = scanner.nextInt();
@@ -149,7 +149,7 @@ public class ApplicationRunner implements org.springframework.boot.ApplicationRu
                 customerRepository.update(updatedCustomer);
                 System.out.println(" the custumer "+ firstName + " " + lastName+ " is uppdate to the db");
                 System.out.println(updatedCustomer);
-                inserted = false;
+                uppdated = false;
             }catch (InputMismatchException ex){
                 System.out.print("You need to write a value: ");
                 scanner.next();
@@ -164,7 +164,8 @@ public class ApplicationRunner implements org.springframework.boot.ApplicationRu
             boolean cont = true;
             while (cont){
                 try {
-                    System.out.println(customerRepository.returngetCustomerMostPopularGenre(scanner.nextInt()).genre());
+                    customerRepository.getMostPopularGenre(scanner.nextInt()).forEach(System.out::println);
+                    System.out.println("=================================");
                     cont = false;
                 }catch (InputMismatchException ex){
                     System.out.print("the customer id should be a number: ");
@@ -177,7 +178,7 @@ public class ApplicationRunner implements org.springframework.boot.ApplicationRu
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-
+        System.out.println("=================================");
         String[] options = {
                 "0. Exit",
                 "1. Read all customers",

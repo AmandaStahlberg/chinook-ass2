@@ -16,13 +16,13 @@ public interface CustomerRepository extends CRUDRepository<Customer, Integer> {
     CustomerCountry getCountryByMostCustomers();
 
 
+    Collection<CustomerGenre> getMostPopularGenre(int customerId);
+
+    //CustomerGenre getCustomerMostPopularGenre(int customerId);
 
     CustomerInvoice returngetHighestSpender();
 
 
-    CustomerGenre returngetCustomerMostPopularGenre();
-
-    CustomerGenre returngetCustomerMostPopularGenre(int customerId);
 
     Collection<Customer> pageCustomers(int limit, int offset);
 

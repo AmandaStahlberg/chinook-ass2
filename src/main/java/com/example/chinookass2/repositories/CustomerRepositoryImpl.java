@@ -175,35 +175,41 @@ public  class CustomerRepositoryImpl implements CustomerRepository {
         return customerSpender;
     }
 
-    public CustomerGenre getCustomerMostPopularGenre(int customerId) {
-        String sql = "SELECT genre.\"name\" as genre_name, count(genre.\"name\") as count " +
-                "FROM invoice_line " +
-                "JOIN invoice " +
-                "ON invoice.invoice_id = invoice_line.invoice_id " +
-                "JOIN track " +
-                "ON invoice_line.track_id = track.track_id " +
-                "JOIN genre " +
-                "ON track.genre_id = genre.genre_id " +
-                "WHERE customer_id = 1 " +
-                "GROUP BY genre.name " +
-                "ORDER BY count DESC " +
-                "LIMIT 1";
-
-        CustomerGenre customerGenre = null;
-        try (Connection con = DriverManager.getConnection(url, username, password)) {
-            PreparedStatement statement = con.prepareStatement(sql);
+    @Override
+    public Collection<CustomerGenre> getMostPopularGenre(int customerId) {
+        String sql = "SELECT i.customer_id, g.name, count(g.name) AS genre_count\n" +
+                // Start at invoice to get track with customer_id
+                "FROM invoice AS i\n" +
+                // Join with invoice line to get track_id
+                "INNER JOIN invoice_line AS il\n" +
+                "ON il.invoice_id = i.invoice_id\n" +
+                // Join on track to get genre_id
+                "INNER JOIN track AS t\n" +
+                "ON il.track_id = t.track_id\n" +
+                // Join on genre to get name
+                "INNER JOIN genre AS g\n" +
+                "ON t.genre_id = g.genre_id\n" +
+                // Clauses...
+                "WHERE i.customer_id = ?\n" +
+                "GROUP BY g.name, i.customer_id\n" +
+                "ORDER BY genre_count DESC\n" +
+                "FETCH FIRST 1 ROWS WITH TIES";
+        Set<CustomerGenre> customerGenres = new HashSet<>();
+        try (Connection conn = DriverManager.getConnection(url, username, password)) {
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setInt(1, customerId);
             ResultSet result = statement.executeQuery();
-            while(result.next()) {
-                customerGenre = new CustomerGenre(customerId, result.getString("genre_name"));
+            while (result.next()) {
+                customerGenres.add(new CustomerGenre(
+                        result.getInt("customer_id"),
+                        result.getString("name")
+                ));
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            System.out.printf(e.getMessage());
         }
-        return customerGenre;
+        return customerGenres;
     }
-
-
-
 
 
     @Override
@@ -272,15 +278,6 @@ public  class CustomerRepositoryImpl implements CustomerRepository {
         return getHighestSpender();
     }
 
-    @Override
-    public CustomerGenre returngetCustomerMostPopularGenre() {
-        return null;
-    }
-
-    @Override
-    public CustomerGenre returngetCustomerMostPopularGenre(int customerId) {
-        return getCustomerMostPopularGenre(customerId);
-    }
 
 
 }
